@@ -1,0 +1,173 @@
+/* 기본 스타일 */
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #000;
+    color: white;
+}
+
+h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+#slot-machine {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 🎯 숫자 전체 배치 */
+#result-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px; /* 게임 간 간격 */
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 20px;
+}
+
+/* 🎯 게임 줄 스타일 (테두리 제거) */
+.result-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: 8px; /* 숫자 간격 */
+    max-width: 100%;
+    overflow-x: auto;
+    padding: 10px;
+    background-color: transparent; /* 🔹 배경 제거 */
+}
+
+/* 🎯 각 숫자 스타일 */
+.slot {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    border: none; /* 🔹 노란색 테두리 제거 */
+    background-color: #3d3a3a;
+}
+
+/* 🔹 숫자 애니메이션 */
+@keyframes spinEffect {
+    0% { transform: rotateY(0deg); opacity: 0; }
+    50% { transform: rotateY(180deg); opacity: 0.5; }
+    100% { transform: rotateY(360deg); opacity: 1; }
+}
+
+.spin-animation {
+    animation: spinEffect 0.8s ease-in-out;
+}
+
+/* 🔹 Spin 버튼 스타일 */
+#spin-button {
+    background-color: #ffcc00;
+    color: black;
+    font-size: 22px;
+    font-weight: bold;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px; /* 🔹 버튼 위치 조정 */
+}
+
+/* 🔹 Spin 버튼을 숫자 블록 아래로 정렬 */
+#button-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 20px; /* 🔹 버튼이 숫자 블록 아래 배치되도록 조정 */
+}
+
+#spin-button:disabled {
+    background-color: grey;
+    cursor: not-allowed;
+}
+
+/* 📜 히스토리 테이블 기본 스타일 */
+#history-container {
+    display: none; /* 기본적으로 숨김 */
+    text-align: center;
+    margin-top: 20px;
+}
+
+#history-table {
+    width: 80%;
+    margin: 0 auto;
+    border-collapse: collapse;
+    background-color: white;
+    color: black;
+    text-align: center;
+}
+
+#history-table th, #history-table td {
+    border: 2px solid black;
+    padding: 10px;
+}
+
+#history-table th {
+    background-color: black;
+    color: white;
+}
+
+.copy-button {
+    background-color: #FFD700;
+    border: none;
+    cursor: pointer;
+    padding: 5px 10px;
+    font-size: 14px;
+    border-radius: 5px;
+}
+
+.copy-button:hover {
+    background-color: #FFC300;
+}
+
+/* 🔹 작은 화면 대응 */
+@media screen and (max-width: 600px) {
+    .slot {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+
+    .result-row {
+        gap: 6px;
+    }
+
+    #spin-button {
+        font-size: 20px;
+        padding: 10px 20px;
+        margin-top: 15px;
+    }
+}
+
+/* 🔹 매우 작은 화면 대응 */
+@media screen and (max-width: 350px) {
+    .slot {
+        width: 35px;
+        height: 35px;
+        font-size: 16px;
+    }
+
+    .result-row {
+        gap: 3px;
+    }
+
+    #spin-button {
+        font-size: 18px;
+        padding: 8px 16px;
+        margin-top: 12px;
+    }
+}

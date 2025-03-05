@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎰 Lotto 6/45 🎰</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>🎰 Lotto 6/45 🎰</h1>
+
+    <!-- 🎰 결과 컨테이너 -->
+    <div id="result-container"></div>
+
+    <!-- 🎯 버튼 컨테이너 -->
+    <div id="button-container">
+        <button id="spin-button">Spin</button>
+    </div>
+
+    <!-- 📜 히스토리 토글 버튼 -->
+    <div id="history-toggle-container">
+        <button id="history-toggle">📜History</button>
+    </div>
+
+    <!-- 📜 히스토리 테이블 -->
+    <div id="history-container">
+        <table id="history-table">
+            <thead>
+                <tr>
+                    <th>회차</th>
+                    <th>로또 번호</th>
+                    <th>복사</th>
+                </tr>
+            </thead>
+            <tbody id="history-table-body"></tbody>
+        </table>
+    </div>
+
+    <script src="{{ url_for('static', filename='game.js') }}"></script>
+</body>
+</html>
