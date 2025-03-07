@@ -87,40 +87,50 @@ document.addEventListener("DOMContentLoaded", () => {
             games.forEach((game, gameIndex) => {
                 let row = document.createElement("div");
                 row.classList.add("result-row");
+
                 game.forEach((num, index) => {
                     let slot = document.createElement("div");
                     slot.classList.add("slot");
-                    let stopTime = 1000 + index * 300;
+
+                    let stopTime = 2000 + index * 500;  // ✅ 기존보다 대기 시간 증가 (기존 대비 +3초)
                     let interval = setInterval(() => {
                         slot.innerText = Math.floor(Math.random() * 45) + 1;
-                    }, 50);
+                    }, 50);  // ✅ 숫자 변경 속도를 기존 50ms → 100ms로 변경 (더 부드러운 애니메이션)
+
                     setTimeout(() => {
                         clearInterval(interval);
                         slot.innerText = num;
                         slot.style.backgroundColor = columnColors[index];
                     }, stopTime);
+
                     row.appendChild(slot);
                 });
+
                 resultContainer.appendChild(row);
             });
         } else {
             resultContainer.innerHTML = "❌ 로또 번호를 불러오는 데 실패했습니다.";
         }
+        
         setTimeout(() => {
             spinButton.disabled = false;
-        }, 4000);
+        }, 7000);  // ✅ 전체 애니메이션 시간 증가에 맞춰 버튼 활성화 시간 조정
     }
 
     spinButton.addEventListener("click", startSlotAnimation);
     console.log("✅ 이벤트 리스너 등록 완료!");
+    
+    // ✅ 히스토리 테이블 스타일 조정
+    historyContainer.style.backgroundColor = "black";
+    historyContainer.style.color = "black";
+    historyContainer.style.padding = "10px";
 
-    // 히스토리 토글 버튼 간격 조정
+    // ✅ 히스토리 토글 버튼 스타일 적용
     const historyToggleContainer = document.getElementById("history-toggle-container");
     if (historyToggleContainer) {
         historyToggleContainer.style.marginTop = "20px";
     }
 
-    // 히스토리 토글 버튼 스타일 적용
     if (historyToggle) {
         historyToggle.style.border = "1px solid white";
         historyToggle.style.background = "none";
@@ -128,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
         historyToggle.style.padding = "8px 16px";
     }
 
-    // 히스토리 테이블 스타일 조정
+    // ✅ 히스토리 테이블 스타일 적용
     const historyTableElement = document.getElementById("history-table");
     if (historyTableElement) {
         historyTableElement.style.borderCollapse = "collapse";
@@ -136,15 +146,14 @@ document.addEventListener("DOMContentLoaded", () => {
         historyTableElement.style.margin = "0 auto";
     }
 
-    // 테이블 헤더 스타일 조정
     document.querySelectorAll("#history-table th").forEach(th => {
         th.style.backgroundColor = "white";
         th.style.color = "black";
     });
 
-    // 테이블 데이터 스타일 조정
     document.querySelectorAll("#history-table td").forEach(td => {
         td.style.backgroundColor = "black";
         td.style.color = "white";
     });
 });
+

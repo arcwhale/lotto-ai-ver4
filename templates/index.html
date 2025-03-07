@@ -3,8 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
     <title>🎰 Lotto 6/45 🎰</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    <!-- ✅ 스타일시트 (버전 추가하여 캐싱 방지) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=1.0">
 </head>
 <body>
     <h1>🎰 Lotto 6/45 🎰</h1>
@@ -19,11 +26,11 @@
 
     <!-- 📜 히스토리 토글 버튼 -->
     <div id="history-toggle-container">
-        <button id="history-toggle">📜History</button>
+        <button id="history-toggle">📜 History</button>
     </div>
 
-    <!-- 📜 히스토리 테이블 -->
-    <div id="history-container">
+    <!-- 📜 히스토리 테이블 (기본적으로 숨김) -->
+    <div id="history-container" style="display: none;">
         <table id="history-table">
             <thead>
                 <tr>
@@ -36,6 +43,7 @@
         </table>
     </div>
 
-    <script src="{{ url_for('static', filename='game.js') }}"></script>
+    <!-- ✅ JavaScript (버전 추가하여 캐싱 방지) -->
+    <script src="{{ url_for('static', filename='game.js') }}?v=1.0"></script>
 </body>
 </html>
