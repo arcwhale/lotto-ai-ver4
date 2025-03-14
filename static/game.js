@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function fetchPredictedNumbers() {
         try {
-            const response = await fetch("http://127.0.0.1:5001/predict");
+            const response = await fetch("http://18.224.64.89:5001/predict");
             if (!response.ok) {
                 throw new Error(`❌ 서버 오류: ${response.status} ${response.statusText}`);
             }
