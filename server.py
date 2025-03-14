@@ -61,7 +61,6 @@ def create_lstm_model():
     return model
 
 # ✅ LSTM 예측 함수 (50세트)
-import numpy as np
 
 def generate_lstm_numbers(X, num_predictions=50):
     try:
@@ -80,21 +79,24 @@ def generate_lstm_numbers(X, num_predictions=50):
         lstm_numbers = []
         for pred in lstm_predictions:
             pred = pred + np.random.normal(0, 3.0, size=6)  
-    
-            # 🎯 확률적 샘플링 (최빈 숫자 과다 출현 방지)
             valid_numbers = sorted(set(np.clip(np.round(pred * 45).astype(int), 1, 45)))
 
-            # 🎯 중복 숫자 보정
             while len(valid_numbers) < 6:
                 valid_numbers.append(random.randint(1, 45))
 
-            # 🎯 숫자 균형 유지 (랜덤 재배치)
             random.shuffle(valid_numbers)
             lstm_numbers.append(valid_numbers[:6])
+
+        # ✅ 항상 리스트 형태 보장 (아래 코드 추가)
+        if isinstance(lstm_numbers, np.ndarray):
+            lstm_numbers = lstm_numbers.tolist()
+        elif isinstance(lstm_numbers, (np.int32, np.int64, int)):
+            lstm_numbers = [[int(lstm_numbers)] * 6 for _ in range(num_predictions)]
 
         return lstm_numbers
 
     except Exception as e:
+        print(f"❌ [ERROR] generate_lstm_numbers 오류: {e}")
         return [sorted(random.sample(range(1, 46), 6)) for _ in range(num_predictions)]
 
 # ✅ 보상 계산 함수 (로또 예측 정확도에 따라 가중치 부여)
@@ -163,14 +165,14 @@ def monte_carlo_simulation(rl_model, num_simulations=10000):
     print(f"✅ [DEBUG] Monte Carlo 최적화 완료: {unique_best_samples[:5]}")
     return unique_best_samples[:5]
 
-# ✅ JSON 변환 오류 방지: numpy.int64 → int 변환 + 리스트 확인
+# ✅ JSON 변환 오류 방지: numpy.int32, numpy.int64, numpy.float64 변환 + 리스트 처리
 def convert_to_int(obj):
-    """ JSON 직렬화 오류 방지: numpy.int64 → int 변환 + 중첩 리스트 처리 """
+    """ JSON 직렬화 오류 방지: numpy.int32, numpy.int64 → int 변환 + 중첩 리스트 처리 """
     if isinstance(obj, list):  
         return [convert_to_int(item) for item in obj]  
     elif isinstance(obj, np.ndarray):  
         return [convert_to_int(item) for item in obj.tolist()]  
-    elif isinstance(obj, (np.int64, np.float64)):  
+    elif isinstance(obj, (np.int32, np.int64, np.float32, np.float64)):  # ✅ np.int32 추가
         return int(obj)  
     else:
         return obj  
@@ -178,11 +180,44 @@ def convert_to_int(obj):
 @app.route('/predict', methods=['GET'])
 def predict():
     try:
+        print("🔄 [DEBUG] 로또 데이터 로드 중...")
         lotto_data = load_lotto_data()
+        print(f"✅ [DEBUG] 데이터 로드 완료! 데이터 크기: {lotto_data.shape}")
+
+        print("🔄 [DEBUG] 데이터 전처리 중...")
         X, y = preprocess_data(lotto_data)
+        print(f"✅ [DEBUG] 데이터 전처리 완료! X 크기: {X.shape}, y 크기: {y.shape}")
+
+        print("🔄 [DEBUG] LSTM 번호 생성 중...")
         lstm_numbers = generate_lstm_numbers(X)
+        print(f"✅ [DEBUG] LSTM 번호 생성 완료: {lstm_numbers}")
+
+        print("🔄 [DEBUG] 강화 학습 모델 훈련 중...")
+
+        # 🔥 lstm_numbers 데이터 강제 변환 추가 (확실한 2차원 리스트로!)
+        if isinstance(lstm_numbers, np.ndarray):
+            lstm_numbers = lstm_numbers.tolist()
+        elif isinstance(lstm_numbers, (np.int32, np.int64, int)):
+            lstm_numbers = [[int(lstm_numbers)] * 6]
+        elif isinstance(lstm_numbers, list) and all(isinstance(x, (np.int32, np.int64, int)) for x in lstm_numbers):
+            lstm_numbers = [lstm_numbers]
+
+        # 추가 확인
+        if not (isinstance(lstm_numbers, list) and isinstance(lstm_numbers[0], list)):
+            raise ValueError(f"lstm_numbers 데이터가 잘못됨: {lstm_numbers}")
+
+        print(f"📊 [DEBUG] 최종 변환된 LSTM 예측 값: {lstm_numbers}, 타입: {type(lstm_numbers)}")
+
         trained_rl_model = train_rl_model(lstm_numbers, lotto_data)
+        if trained_rl_model is None:
+            raise ValueError("trained_rl_model이 None 입니다. 데이터 확인 필요.")
+
+        print("✅ [DEBUG] 강화 학습 모델 훈련 완료!")
+
+        print("🔄 [DEBUG] 몬테카를로 시뮬레이션 실행 중...")
         final_games = monte_carlo_simulation(trained_rl_model, num_simulations=10000)
+        print(f"✅ [DEBUG] 몬테카를로 시뮬레이션 완료! 결과: {final_games}")
+
         history.appendleft(final_games)
 
         return jsonify({
@@ -192,7 +227,8 @@ def predict():
         })
 
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        print(f"❌ [ERROR] 서버 예측 중 오류 발생: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 # ✅ LSTM 학습 함수 (Epoch 증가 300~500)
 def train_lstm_model():
