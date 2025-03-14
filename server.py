@@ -260,4 +260,4 @@ def run_scheduler():
 
 if __name__ == '__main__':
     threading.Thread(target=run_scheduler, daemon=True).start()
-    app.run(host='0.0.0.0', port=5001, debug=False)
+    app.run(host='0.0.0.0', port=5001, debug=True)
